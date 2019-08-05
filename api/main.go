@@ -34,7 +34,7 @@ func main() {
 
 	}
 
-	ItemList := []ItemList {
+	Items := []ItemList {
 		item1,
 		item2,
 	}

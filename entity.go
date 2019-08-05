@@ -1,7 +1,8 @@
 package shoppingpal
 
 type Item struct {
-	Name         string  `json:"Name"`
+	Id           string  `json:id`
+	Name         string  `json:"name"`
 	Price        float64 `json:"price"`
 	Rating       string  `json:"rating"`
 	Summary      string  `json:"summary"`
@@ -10,7 +11,7 @@ type Item struct {
 }
 
 type Source struct {
-	Name          string `json:"Name"`
+	Name          string `json:"name"`
 	Author        string `json:"author"`
 	Title         string `json:"title"`
 	Content       string `json:"content"`
@@ -18,4 +19,4 @@ type Source struct {
 	DatePublished string `json:"date"`
 }
 
-type ItemList []Item
+type Items []Item

@@ -25,10 +25,10 @@ func returnSingleItem(w http.ResponseWriter, r *http.Request) {
 
 	// Loop over all of our Items
 	// if the item.id equals the key we pass in
-	// return the article encoded as JSON
+	// return the item encoded as JSON
 	for _, item := range Items {
 		if item.id == key {
-			json.NewEncoder(w).Encode(article)
+			json.NewEncoder(w).Encode(item)
 		}
 	}
 }
