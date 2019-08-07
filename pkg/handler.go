@@ -7,17 +7,17 @@ import (
 	"net/http"
 )
 
-func homePage(w http.ResponseWriter, r *http.Request) {
+func HomePage(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Welcome to the HomePage!")
 	fmt.Println("Endpoint Hit: homePage")
 }
 
-func handleRequests() {
+func HandleRequests() {
 	http.HandleFunc("/", homePage)
 	log.Fatal(http.ListenAndServe(":10000", nil))
 }
 
-func returnAllItems(w http.ResponseWriter, r *http.Request) {
+func ReturnAllItems(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Endpoint Hit: returnAllItems")
 	source := Source{
 		Name:          "N1",
