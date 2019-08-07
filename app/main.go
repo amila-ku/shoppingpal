@@ -9,6 +9,6 @@ import (
 func main() {
 
 	fmt.Println("starting")
-	HandleRequests()
+	shoppingpal.HandleRequests()
 
 }
