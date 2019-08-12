@@ -8,6 +8,8 @@ import (
 
 func main() {
 	fmt.Println("starting")
-	shoppingpal.HandleRequests()
+	ItemList := NewItems()
+
+	shoppingpal.HandleRequests(ItemList)
 
 }

@@ -21,8 +21,12 @@ type Source struct {
 
 type Items []Item
 
+func (I Items) append(itm Item) {
+	I = append(I, itm)
+}
+
 // Return Items
-func GetItems() Items {
+func NewItems() Items {
 	source := Source{
 		Name:          "N1",
 		Author:        "A1",
