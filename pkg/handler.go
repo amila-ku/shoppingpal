@@ -10,19 +10,18 @@ import (
 	"github.com/gorilla/mux"
 )
 
-var ItemList Items
+var ItemList = NewItems()
 
 func homePage(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Welcome to the HomePage!")
 	fmt.Println("Endpoint Hit: homePage")
 }
 
-func HandleRequests(I Items) {
+func HandleRequests() {
 	// http.HandleFunc("/", returnAllItems)
 	// log.Fatal(http.ListenAndServe(":10000", nil))
 
 	// replaceing http.HandleFunc with myRouter.HandleFunc
-	ItemList = I
 	myRouter := mux.NewRouter().StrictSlash(true)
 	myRouter.HandleFunc("/", homePage)
 	myRouter.HandleFunc("/all", returnAllItems).Methods("GET")
