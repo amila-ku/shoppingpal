@@ -41,7 +41,12 @@ func createNewItem(w http.ResponseWriter, r *http.Request) {
 	var itm Item
 	json.Unmarshal(reqBody, &itm)
 	// update our global item array to include our new item
-	ItemList.append(itm)
+	//ItemList.append(itm)
+	ItemList = append(ItemList, itm)
+
+	fmt.Println(ItemList)
+
+	json.NewEncoder(w).Encode(itm)
 
 }
 
@@ -60,5 +65,19 @@ func returnSingleItem(w http.ResponseWriter, r *http.Request) {
 func returnAllItems(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Endpoint Hit: returnAllItems")
 
-	json.NewEncoder(w).Encode(ItemList)
+	//json.NewEncoder(w).Encode(ItemList)
+
+	// Print Json with indents, the pretty way:
+	prettyJSON(w, ItemList)
+
+}
+
+func prettyJSON(w http.ResponseWriter, list Items) {
+	pretty, err := json.MarshalIndent(list, "", "    ")
+	if err != nil {
+		log.Fatal("Failed to generate json", err)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(pretty)
 }
