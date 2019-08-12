@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 func homePage(w http.ResponseWriter, r *http.Request) {
@@ -13,38 +15,37 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleRequests() {
-	http.HandleFunc("/", homePage)
-	log.Fatal(http.ListenAndServe(":10000", nil))
+	// http.HandleFunc("/", returnAllItems)
+	// log.Fatal(http.ListenAndServe(":10000", nil))
+
+	// replaceing http.HandleFunc with myRouter.HandleFunc
+	myRouter := mux.NewRouter().StrictSlash(true)
+	myRouter.HandleFunc("/", homePage)
+	myRouter.HandleFunc("/all", returnAllItems)
+	myRouter.HandleFunc("/item/{id}", returnSingleItem)
+
+	log.Fatal(http.ListenAndServe(":10000", myRouter))
 }
 
-func ReturnAllItems(w http.ResponseWriter, r *http.Request) {
+func returnSingleItem(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	key := vars["id"]
+
+	fmt.Fprintf(w, "Key: "+key)
+
+	ItemList := GetItems()
+
+	for _, item := range ItemList {
+		if item.Id == key {
+			json.NewEncoder(w).Encode(item)
+		}
+	}
+}
+
+func returnAllItems(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Endpoint Hit: returnAllItems")
-	source := Source{
-		Name:          "N1",
-		Author:        "A1",
-		Title:         "T1",
-		Content:       "C1",
-		URL:           "https://test",
-		DatePublished: "09-08-2019",
-	}
 
-	item1 := Item{
-		Name:    "Book",
-		Price:   40,
-		Summary: "My Book",
-		Sources: source,
-	}
+	ItemList := GetItems()
 
-	item2 := Item{
-		Name:    "Book2",
-		Price:   20,
-		Summary: "My Book 2",
-		Sources: source,
-	}
-
-	ItemList := Items{
-		item1,
-		item2,
-	}
 	json.NewEncoder(w).Encode(ItemList)
 }

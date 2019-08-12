@@ -20,3 +20,38 @@ type Source struct {
 }
 
 type Items []Item
+
+// Return Items
+func GetItems() Items {
+	source := Source{
+		Name:          "N1",
+		Author:        "A1",
+		Title:         "T1",
+		Content:       "C1",
+		URL:           "https://test",
+		DatePublished: "09-08-2019",
+	}
+
+	item1 := Item{
+		Id:      "10001",
+		Name:    "Book",
+		Price:   40,
+		Summary: "My Book",
+		Sources: source,
+	}
+
+	item2 := Item{
+		Id:      "10002",
+		Name:    "Book2",
+		Price:   20,
+		Summary: "My Book 2",
+		Sources: source,
+	}
+
+	ItemList := Items{
+		item1,
+		item2,
+	}
+
+	return ItemList
+}
