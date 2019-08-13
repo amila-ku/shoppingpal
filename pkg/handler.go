@@ -24,8 +24,9 @@ func HandleRequests() {
 	// replaceing http.HandleFunc with myRouter.HandleFunc
 	myRouter := mux.NewRouter().StrictSlash(true)
 	myRouter.HandleFunc("/", homePage)
-	myRouter.HandleFunc("/all", returnAllItems).Methods("GET")
+	myRouter.HandleFunc("/items", returnAllItems).Methods("GET")
 	myRouter.HandleFunc("/item/{id}", returnSingleItem).Methods("GET")
+	myRouter.HandleFunc("/item/{id}", deleteItem).Methods("DELETE")
 	myRouter.HandleFunc("/item", createNewItem).Methods("POST")
 
 	log.Fatal(http.ListenAndServe(":10000", myRouter))
@@ -54,6 +55,7 @@ func returnSingleItem(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	key := vars["id"]
 
+	//Check items slice for matching item
 	for _, item := range ItemList {
 
 		if item.Id == key {
@@ -69,6 +71,22 @@ func returnAllItems(w http.ResponseWriter, r *http.Request) {
 
 	// Print Json with indents, the pretty way:
 	prettyJSON(w, ItemList)
+
+}
+
+func deleteItem(w http.ResponseWriter, r *http.Request) {
+	// parse the path parameters
+	vars := mux.Vars(r)
+	// extract the `id` of the item
+	id := vars["id"]
+
+	//loop through all our items
+	for index, item := range ItemList {
+		// delete if item id matches
+		if item.Id == id {
+			ItemList = append(ItemList[:index], ItemList[index+1:]...)
+		}
+	}
 
 }
 
