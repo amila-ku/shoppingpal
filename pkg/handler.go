@@ -46,7 +46,7 @@ func createNewItem(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println(ItemList)
 
-	json.NewEncoder(w).Encode(itm)
+	prettyJSON(w, itm)
 
 }
 
@@ -57,7 +57,7 @@ func returnSingleItem(w http.ResponseWriter, r *http.Request) {
 	for _, item := range ItemList {
 
 		if item.Id == key {
-			json.NewEncoder(w).Encode(item)
+			prettyJSON(w, item)
 		}
 	}
 }
@@ -72,7 +72,7 @@ func returnAllItems(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func prettyJSON(w http.ResponseWriter, list Items) {
+func prettyJSON(w http.ResponseWriter, list interface{}) {
 	pretty, err := json.MarshalIndent(list, "", "    ")
 	if err != nil {
 		log.Fatal("Failed to generate json", err)
