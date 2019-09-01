@@ -1,13 +1,11 @@
 package shoppingpal
 
 import (
-    "github.com/aws/aws-sdk-go/aws"
-    "github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/dynamodb"
-	"github.com/guregu/dynamo"
+	"log"
 
-    "fmt"
-    "os"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/guregu/dynamo"
 )
 
 type table interface {
@@ -16,24 +14,18 @@ type table interface {
 }
 
 type db struct {
-	region string,
+	region    string
 	tableName string
-
+	endpoint  string
 }
 
-type dynamodbtable struct {
-	name string
-}
-
-func (t dynamodbtable) put(w Items) {
-	err := t.Put(w).Run() 
-}
-
-
-func (d db) createTable() {
-	db := dynamo.New(session.New(), &aws.Config{Region: aws.String(d.region)})
+func (d db) createTable(w Item) {
+	db := dynamo.New(session.New(), &aws.Config{Region: aws.String(d.region)}, &aws.Config{Endpoint: aws.String(d.endpoint)})
 	table := db.Table(d.tableName)
+	err := table.Put(w).Run()
 
-	return table
-	
+	if err != nil {
+		log.Fatal("Failed to write to DB", err)
+	}
+
 }

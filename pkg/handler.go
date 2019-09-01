@@ -45,6 +45,10 @@ func createNewItem(w http.ResponseWriter, r *http.Request) {
 	//ItemList.append(itm)
 	ItemList = append(ItemList, itm)
 
+	// save to db
+	db := db{"eu-central-1", "test", "http://localhost:8080"}
+	db.createTable(itm)
+
 	fmt.Println(ItemList)
 
 	prettyJSON(w, itm)
