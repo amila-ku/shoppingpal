@@ -46,8 +46,27 @@ func createNewItem(w http.ResponseWriter, r *http.Request) {
 	ItemList = append(ItemList, itm)
 
 	// save to db
-	db := db{"eu-central-1", "test", "http://localhost:8080"}
-	db.createTable(itm)
+	//db := database{"eu-central-1", "test", "http://localhost:8000"}
+	db, err := NewDynamoTable("itemtable")
+
+	if err != nil {
+		log.Fatal("Failed to create table", err)
+	}
+	err = db.createItem(itm)
+	if err != nil {
+		log.Fatal("Unable to insert item", err)
+	}
+
+	// dynamoTable, err := newDynamoTable("itemTable", "")
+	// if err != nil {
+	// 	log.Fatal("Unable to create table", err)
+	// }
+
+	// err = dynamoTable.Put(itm).Run()
+
+	// if err != nil {
+	// 	log.Fatal("Unable to insert item", err)
+	// }
 
 	fmt.Println(ItemList)
 

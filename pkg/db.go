@@ -2,30 +2,98 @@ package shoppingpal
 
 import (
 	"log"
+	"os"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/guregu/dynamo"
+	"github.com/aws/aws-sdk-go/service/dynamodb"
+	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 )
 
-type table interface {
-	put()
-	get()
-}
+var region = "eu-central-1"
+var endpoint = "http://localhost:8000"
 
-type db struct {
-	region    string
+type DatabaseService struct {
+	itemTable *dynamodb.DynamoDB
 	tableName string
-	endpoint  string
 }
 
-func (d db) createTable(w Item) {
-	db := dynamo.New(session.New(), &aws.Config{Region: aws.String(d.region)}, &aws.Config{Endpoint: aws.String(d.endpoint)})
-	table := db.Table(d.tableName)
-	err := table.Put(w).Run()
+//NewDynamoTable Creates a pointer to new new DynamoDB type
+func NewDynamoTable(tableName string) (*DatabaseService, error) {
 
-	if err != nil {
-		log.Fatal("Failed to write to DB", err)
+	config := &aws.Config{
+		Region:   aws.String(region),
+		Endpoint: aws.String(endpoint),
 	}
 
+	sess := session.Must(session.NewSession(config))
+
+	svc := dynamodb.New(sess)
+
+	input := &dynamodb.CreateTableInput{
+		AttributeDefinitions: []*dynamodb.AttributeDefinition{
+			{
+				AttributeName: aws.String("Id"),
+				AttributeType: aws.String("S"),
+			},
+			{
+				AttributeName: aws.String("name"),
+				AttributeType: aws.String("S"),
+			},
+		},
+		KeySchema: []*dynamodb.KeySchemaElement{
+			{
+				AttributeName: aws.String("Id"),
+				KeyType:       aws.String("HASH"),
+			},
+			{
+				AttributeName: aws.String("name"),
+				KeyType:       aws.String("RANGE"),
+			},
+		},
+		ProvisionedThroughput: &dynamodb.ProvisionedThroughput{
+			ReadCapacityUnits:  aws.Int64(10),
+			WriteCapacityUnits: aws.Int64(10),
+		},
+		TableName: aws.String(tableName),
+	}
+
+	_, err := svc.CreateTable(input)
+	if err != nil {
+		log.Println("Got error calling CreateTable:")
+		log.Fatalln(err.Error())
+		os.Exit(1)
+	}
+
+	return &DatabaseService{
+		itemTable: svc,
+		tableName: tableName,
+	}, nil
+}
+
+func (i *DatabaseService) createItem(item Item) error {
+	//now := time.Now()
+	//item.CreatedAt = now
+	//item.UpdatedAt = now
+	//item.Id = xid.New().String()
+	av, err := dynamodbattribute.MarshalMap(item)
+	if err != nil {
+		log.Println("Got error marshalling new movie item:")
+		log.Println(err.Error())
+		os.Exit(1)
+	}
+
+	input := &dynamodb.PutItemInput{
+		Item:      av,
+		TableName: aws.String(i.tableName),
+	}
+
+	_, err = i.itemTable.PutItem(input)
+	if err != nil {
+		log.Println("Got error calling PutItem:")
+		log.Println(err.Error())
+		os.Exit(1)
+	}
+
+	return err
 }
