@@ -7,7 +7,9 @@ import (
 	"log"
 	"net/http"
 
+	_ "github.com/amila-ku/shoppingpal/api/docs"
 	"github.com/gorilla/mux"
+	swagger "github.com/swaggo/http-swagger"
 )
 
 var ItemList = NewItems()
@@ -24,12 +26,21 @@ func HandleRequests() {
 	// replaceing http.HandleFunc with myRouter.HandleFunc
 	myRouter := mux.NewRouter().StrictSlash(true)
 	myRouter.HandleFunc("/", homePage)
+	myRouter.HandleFunc("/swagger", swaggerdocs)
 	myRouter.HandleFunc("/items", returnAllItems).Methods("GET")
 	myRouter.HandleFunc("/item/{id}", returnSingleItem).Methods("GET")
 	myRouter.HandleFunc("/item/{id}", deleteItem).Methods("DELETE")
 	myRouter.HandleFunc("/item", createNewItem).Methods("POST")
 
 	log.Fatal(http.ListenAndServe(":10000", myRouter))
+}
+
+func swaggerdocs() {
+
+	swagger.Handler(
+		swagger.URL("http://localhost:10000/swagger/doc.json"), //The url pointing to API definition"
+	)
+
 }
 
 func createNewItem(w http.ResponseWriter, r *http.Request) {
@@ -47,7 +58,7 @@ func createNewItem(w http.ResponseWriter, r *http.Request) {
 
 	// save to db
 	//db := database{"eu-central-1", "test", "http://localhost:8000"}
-	db, err := NewDynamoTable("itemtable")
+	db, err := NewTable("itemtable")
 
 	if err != nil {
 		log.Fatal("Failed to create table", err)

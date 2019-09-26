@@ -18,8 +18,8 @@ type DatabaseService struct {
 	tableName string
 }
 
-//NewDynamoTable Creates a pointer to new new DynamoDB type
-func NewDynamoTable(tableName string) (*DatabaseService, error) {
+//NewTable Creates a pointer to new new DynamoDB type
+func NewTable(tableName string) (*DatabaseService, error) {
 
 	config := &aws.Config{
 		Region:   aws.String(region),
@@ -78,7 +78,7 @@ func (i *DatabaseService) createItem(item Item) error {
 	//item.Id = xid.New().String()
 	av, err := dynamodbattribute.MarshalMap(item)
 	if err != nil {
-		log.Println("Got error marshalling new movie item:")
+		log.Println("Got error marshalling new item:")
 		log.Println(err.Error())
 		os.Exit(1)
 	}
