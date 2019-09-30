@@ -1,12 +1,11 @@
-package main
+package api
 
 import (
 	"fmt"
-
-	shoppingpal "github.com/amila-ku/shoppingpal/pkg"
+	"github.com/amila-ku/shoppingpal/api/handler"
 )
 
-// @title Swagger Example API
+// @title ShoppingPal API
 // @version 1.0
 // @description This is a sample server celler server.
 // @termsOfService http://swagger.io/terms/
@@ -18,7 +17,7 @@ import (
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @host localhost:8080
+// @host localhost:10000
 // @BasePath /api/v1
 
 // @securityDefinitions.basic BasicAuth
@@ -34,8 +33,7 @@ import (
 
 func main() {
 	fmt.Println("starting")
-	//ItemList := NewItems()
 
-	shoppingpal.HandleRequests()
+	handler.HandleRequests()
 
 }

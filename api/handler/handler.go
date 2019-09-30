@@ -1,4 +1,4 @@
-package shoppingpal
+package handler
 
 import (
 	"encoding/json"
@@ -8,11 +8,14 @@ import (
 	"net/http"
 
 	_ "github.com/amila-ku/shoppingpal/api/docs"
+	"github.com/amila-ku/shoppingpal/pkg/entity"
+	store "github.com/amila-ku/shoppingpal/pkg/store"
 	"github.com/gorilla/mux"
 	swagger "github.com/swaggo/http-swagger"
 )
 
-var ItemList = NewItems()
+// ItemList hods the list of items
+var ItemList = entity.NewItems()
 
 func homePage(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Welcome to the HomePage!")
@@ -36,6 +39,19 @@ func HandleRequests() {
 	log.Fatal(http.ListenAndServe(":10000", myRouter))
 }
 
+// Add Item godoc
+// @Summary Add an Item
+// @Description add an item
+// @ID get-string-by-int
+// @Accept  json
+// @Produce  json
+// @Param id path int true "Account ID"
+// @Success 200 {object} entity.Item
+// @Header 200 {string} Token "qwerty"
+// @Failure 400 {object} entity.APIError "We need ID!!"
+// @Failure 404 {object} entity.APIError "Can not find ID"
+// @Failure 500 {object} entity.APIError "We had a problem"
+// @Router /items/ [post]
 func createNewItem(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Endpoint Hit: CreateNewItem")
 
@@ -43,7 +59,7 @@ func createNewItem(w http.ResponseWriter, r *http.Request) {
 	// return the string response containing the request body
 	reqBody, _ := ioutil.ReadAll(r.Body)
 	//fmt.Fprintf(w, "%+v", string(reqBody))
-	var itm Item
+	var itm entity.Item
 	json.Unmarshal(reqBody, &itm)
 	// update our global item array to include our new item
 	//ItemList.append(itm)
@@ -51,12 +67,12 @@ func createNewItem(w http.ResponseWriter, r *http.Request) {
 
 	// save to db
 	//db := database{"eu-central-1", "test", "http://localhost:8000"}
-	db, err := NewTable("itemtable")
+	db, err := store.NewTable("itemtable")
 
 	if err != nil {
 		log.Fatal("Failed to create table", err)
 	}
-	err = db.createItem(itm)
+	err = db.CreateItem(itm)
 	if err != nil {
 		log.Fatal("Unable to insert item", err)
 	}
@@ -90,7 +106,17 @@ func returnSingleItem(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 }
-
+// ListALLItems godoc
+// @Summary List Items
+// @Description get Items
+// @Accept  json
+// @Produce  json
+// @Param q query string false "name search by q"
+// @Success 200 {array} entity.Item
+// @Header 200 {string} Token "qwerty"
+// @Failure 400 {object} entity.APIError "We need ID!!"
+// @Failure 404 {object} entity.APIError "Can not find ID"
+// @Router /items [get]
 func returnAllItems(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Endpoint Hit: returnAllItems")
 

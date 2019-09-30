@@ -7,6 +7,7 @@ require (
 	github.com/aws/aws-sdk-go v1.23.17
 	github.com/gorilla/mux v1.7.3
 	github.com/guregu/dynamo v1.3.1
+	github.com/sirupsen/logrus v1.4.2
 	github.com/swaggo/files v0.0.0-20190704085106-630677cd5c14 // indirect
 	github.com/swaggo/http-swagger v0.0.0-20190614090009-c2865af9083e
 	github.com/swaggo/swag v1.6.2

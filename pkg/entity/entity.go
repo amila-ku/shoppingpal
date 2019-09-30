@@ -1,4 +1,4 @@
-package shoppingpal
+package entity
 
 type Item struct {
 	Id           string  `json:id`
@@ -20,6 +20,12 @@ type Source struct {
 }
 
 type Items []Item
+
+// APIError is to record errors
+type APIError struct {
+	ErrorCode    int
+	ErrorMessage string
+}
 
 func (I Items) append(itm Item) {
 	I = append(I, itm)

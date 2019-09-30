@@ -1,4 +1,4 @@
-package shoppingpal
+package store
 
 import (
 	"log"
@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
+	"github.com/amila-ku/shoppingpal/pkg/entity"
 )
 
 var region = "eu-central-1"
@@ -71,7 +72,7 @@ func NewTable(tableName string) (*DatabaseService, error) {
 	}, nil
 }
 
-func (i *DatabaseService) createItem(item Item) error {
+func (i *DatabaseService) CreateItem(item entity.Item) error {
 	//now := time.Now()
 	//item.CreatedAt = now
 	//item.UpdatedAt = now
