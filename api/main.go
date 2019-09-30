@@ -1,7 +1,8 @@
-package api
+package main
 
 import (
 	"fmt"
+
 	"github.com/amila-ku/shoppingpal/api/handler"
 )
 
