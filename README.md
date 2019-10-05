@@ -6,6 +6,8 @@ CRUD API using golang and dynamodb as backend database.
 
 ![](https://github.com/amila-ku/shoppingpal/workflows/Go/badge.svg)
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/amila-ku/shoppingpal)](https://goreportcard.com/report/github.com/amila-ku/shoppingpal)
+
 
 ## Local Setup
 
