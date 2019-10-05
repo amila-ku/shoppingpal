@@ -18,38 +18,22 @@ import (
 // ItemList hods the list of items
 var ItemList = entity.NewItems()
 
+// Home page handler
 func homePage(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Welcome to the HomePage!")
 	fmt.Println("Endpoint Hit: homePage")
 }
 
+// health endpoint handler
 func healthEndpoint(w http.ResponseWriter, r *http.Request){
 	json.NewEncoder(w).Encode(map[string]bool{"ok": true})
 }
 
-func HandleRequests() {
-	// http.HandleFunc("/", returnAllItems)
-	// log.Fatal(http.ListenAndServe(":10000", nil))
-
-	// replaceing http.HandleFunc with myRouter.HandleFunc
-	myRouter := mux.NewRouter().StrictSlash(true)
-	myRouter.HandleFunc("/", homePage)
-	myRouter.HandleFunc("/health", healthEndpoint)
-	myRouter.PathPrefix("/metrics").Handler(promhttp.Handler())
-	//myRouter.HandleFunc("/swagger", swagger.Handler(swagger.URL("http://localhost:10000/swagger/doc.json")))
-	myRouter.PathPrefix("/swagger/").Handler(swagger.Handler(swagger.URL("http://localhost:10000/swagger/doc.json")))
-	myRouter.HandleFunc("/items", returnAllItems).Methods("GET")
-	myRouter.HandleFunc("/item/{id}", returnSingleItem).Methods("GET")
-	myRouter.HandleFunc("/item/{id}", deleteItem).Methods("DELETE")
-	myRouter.HandleFunc("/item", createNewItem).Methods("POST")
-
-	log.Fatal(http.ListenAndServe(":10000", myRouter))
-}
 
 // Add Item godoc
 // @Summary Add an Item
 // @Description add an item
-// @ID get-string-by-int
+// @ID add-item
 // @Accept  json
 // @Produce  json
 // @Param id path int true "Account ID"
@@ -68,12 +52,11 @@ func createNewItem(w http.ResponseWriter, r *http.Request) {
 	//fmt.Fprintf(w, "%+v", string(reqBody))
 	var itm entity.Item
 	json.Unmarshal(reqBody, &itm)
+
 	// update our global item array to include our new item
-	//ItemList.append(itm)
 	ItemList = append(ItemList, itm)
 
 	// save to db
-	//db := database{"eu-central-1", "test", "http://localhost:8000"}
 	db, err := store.NewTable("itemtable")
 
 	if err != nil {
@@ -84,23 +67,22 @@ func createNewItem(w http.ResponseWriter, r *http.Request) {
 		log.Fatal("Unable to insert item", err)
 	}
 
-	// dynamoTable, err := newDynamoTable("itemTable", "")
-	// if err != nil {
-	// 	log.Fatal("Unable to create table", err)
-	// }
-
-	// err = dynamoTable.Put(itm).Run()
-
-	// if err != nil {
-	// 	log.Fatal("Unable to insert item", err)
-	// }
-
 	fmt.Println(ItemList)
 
 	prettyJSON(w, itm)
 
 }
-
+// List Single Item godoc
+// @Summary List Single Item
+// @Description get Item
+// @Accept  json
+// @Produce  json
+// @Param id query string false "item search by id"
+// @Success 200 {array} entity.Item
+// @Header 200 {string} Token "qwerty"
+// @Failure 400 {object} entity.APIError "We need ID!!"
+// @Failure 404 {object} entity.APIError "Can not find ID"
+// @Router /items [get]
 func returnSingleItem(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	key := vars["id"]
@@ -118,7 +100,6 @@ func returnSingleItem(w http.ResponseWriter, r *http.Request) {
 // @Description get Items
 // @Accept  json
 // @Produce  json
-// @Param q query string false "name search by q"
 // @Success 200 {array} entity.Item
 // @Header 200 {string} Token "qwerty"
 // @Failure 400 {object} entity.APIError "We need ID!!"
@@ -133,7 +114,17 @@ func returnAllItems(w http.ResponseWriter, r *http.Request) {
 	prettyJSON(w, ItemList)
 
 }
-
+// DeleteItems godoc
+// @Summary Delete Items
+// @Description Delete Items
+// @Accept  json
+// @Produce  json
+// @Param id query string false "item delete by id"
+// @Success 200 {array} entity.Item
+// @Header 200 {string} Token "qwerty"
+// @Failure 400 {object} entity.APIError "We need ID!!"
+// @Failure 404 {object} entity.APIError "Can not find ID"
+// @Router /items/id [del]
 func deleteItem(w http.ResponseWriter, r *http.Request) {
 	// parse the path parameters
 	vars := mux.Vars(r)
@@ -158,4 +149,27 @@ func prettyJSON(w http.ResponseWriter, list interface{}) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(pretty)
+}
+
+func HandleRequests() {
+	// Remnants of default http handler for comparison
+	// http.HandleFunc("/", returnAllItems)
+	// log.Fatal(http.ListenAndServe(":10000", nil))
+
+	// Creates a new router
+	myRouter := mux.NewRouter().StrictSlash(true)
+
+	// Application Operations related mappings
+	myRouter.HandleFunc("/", homePage)
+	myRouter.HandleFunc("/health", healthEndpoint)
+	myRouter.PathPrefix("/metrics").Handler(promhttp.Handler())
+
+	// App functionality mappings
+	myRouter.PathPrefix("/swagger/").Handler(swagger.Handler(swagger.URL("http://localhost:10000/swagger/doc.json")))
+	myRouter.HandleFunc("/items", returnAllItems).Methods("GET")
+	myRouter.HandleFunc("/item/{id}", returnSingleItem).Methods("GET")
+	myRouter.HandleFunc("/item/{id}", deleteItem).Methods("DELETE")
+	myRouter.HandleFunc("/item", createNewItem).Methods("POST")
+
+	log.Fatal(http.ListenAndServe(":10000", myRouter))
 }
