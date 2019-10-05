@@ -2,6 +2,11 @@
 
 CRUD API using golang and dynamodb as backend database.
 
+## status
+
+![](https://github.com/amila-ku/shoppingpal/workflows/Go/badge.svg)
+
+
 ## Local Setup
 
 
