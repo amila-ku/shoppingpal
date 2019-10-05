@@ -12,6 +12,7 @@ import (
 	store "github.com/amila-ku/shoppingpal/pkg/store"
 	"github.com/gorilla/mux"
 	swagger "github.com/swaggo/http-swagger"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 // ItemList hods the list of items
@@ -22,6 +23,10 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Endpoint Hit: homePage")
 }
 
+func healthEndpoint(w http.ResponseWriter, r *http.Request){
+	json.NewEncoder(w).Encode(map[string]bool{"ok": true})
+}
+
 func HandleRequests() {
 	// http.HandleFunc("/", returnAllItems)
 	// log.Fatal(http.ListenAndServe(":10000", nil))
@@ -29,6 +34,8 @@ func HandleRequests() {
 	// replaceing http.HandleFunc with myRouter.HandleFunc
 	myRouter := mux.NewRouter().StrictSlash(true)
 	myRouter.HandleFunc("/", homePage)
+	myRouter.HandleFunc("/health", healthEndpoint)
+	myRouter.PathPrefix("/metrics").Handler(promhttp.Handler())
 	//myRouter.HandleFunc("/swagger", swagger.Handler(swagger.URL("http://localhost:10000/swagger/doc.json")))
 	myRouter.PathPrefix("/swagger/").Handler(swagger.Handler(swagger.URL("http://localhost:10000/swagger/doc.json")))
 	myRouter.HandleFunc("/items", returnAllItems).Methods("GET")
