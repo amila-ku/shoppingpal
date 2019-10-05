@@ -1,11 +1,12 @@
 FROM golang:1.8
 
-WORKDIR /go/src/app
+WORKDIR /go/src/github.com/amila-ku/shoppingpal
 COPY . .
 
-WORKDIR /go/src/app/api
-
 RUN go get -d -v ./...
-RUN go install -v ./...
+
+WORKDIR /go/src/github.com/amila-ku/shoppingpal/api
+
+RUN ls -lhtr; go build .
 
 CMD ["api"]
