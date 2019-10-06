@@ -14,6 +14,7 @@ import (
 var region = "eu-central-1"
 var endpoint = "http://localhost:8000"
 
+//DatabaseService defines a general database provider type
 type DatabaseService struct {
 	itemTable *dynamodb.DynamoDB
 	tableName string
@@ -72,6 +73,7 @@ func NewTable(tableName string) (*DatabaseService, error) {
 	}, nil
 }
 
+//CreateItem is a receiver function for DatabaseService, this creates new item in database
 func (i *DatabaseService) CreateItem(item entity.Item) error {
 	//now := time.Now()
 	//item.CreatedAt = now
