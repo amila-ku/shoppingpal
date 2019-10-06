@@ -1,7 +1,8 @@
 package entity
 
+//Item is the structure of a general shopping item
 type Item struct {
-	Id           string  `json:id`
+	ID           string  `json:id`
 	Name         string  `json:"name"`
 	Price        float64 `json:"price"`
 	Rating       string  `json:"rating"`
@@ -10,6 +11,7 @@ type Item struct {
 	Sources      Source  `json:"source"`
 }
 
+//Source is the structure of provider of an item
 type Source struct {
 	Name          string `json:"name"`
 	Author        string `json:"author"`
@@ -19,6 +21,7 @@ type Source struct {
 	DatePublished string `json:"date"`
 }
 
+//Items is a list if items
 type Items []Item
 
 // APIError is to record errors
@@ -31,7 +34,7 @@ func (I Items) append(itm Item) {
 	I = append(I, itm)
 }
 
-// Return Items
+//NewItems Return list of Items
 func NewItems() Items {
 	source := Source{
 		Name:          "N1",
@@ -43,7 +46,7 @@ func NewItems() Items {
 	}
 
 	item1 := Item{
-		Id:      "10001",
+		ID:      "10001",
 		Name:    "Book",
 		Price:   40,
 		Summary: "My Book",
@@ -51,7 +54,7 @@ func NewItems() Items {
 	}
 
 	item2 := Item{
-		Id:      "10002",
+		ID:      "10002",
 		Name:    "Book2",
 		Price:   20,
 		Summary: "My Book 2",

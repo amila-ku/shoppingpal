@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 
+	// blank import is for adding swagger docs
 	_ "github.com/amila-ku/shoppingpal/api/docs"
 	"github.com/amila-ku/shoppingpal/pkg/entity"
 	store "github.com/amila-ku/shoppingpal/pkg/store"
@@ -90,7 +91,7 @@ func returnSingleItem(w http.ResponseWriter, r *http.Request) {
 	//Check items slice for matching item
 	for _, item := range ItemList {
 
-		if item.Id == key {
+		if item.ID == key {
 			prettyJSON(w, item)
 		}
 	}
@@ -134,7 +135,7 @@ func deleteItem(w http.ResponseWriter, r *http.Request) {
 	//loop through all our items
 	for index, item := range ItemList {
 		// delete if item id matches
-		if item.Id == id {
+		if item.ID == id {
 			ItemList = append(ItemList[:index], ItemList[index+1:]...)
 		}
 	}
@@ -151,6 +152,7 @@ func prettyJSON(w http.ResponseWriter, list interface{}) {
 	w.Write(pretty)
 }
 
+//HandleRequests defines all the route mappings
 func HandleRequests() {
 	// Remnants of default http handler for comparison
 	// http.HandleFunc("/", returnAllItems)
